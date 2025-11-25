@@ -10,7 +10,9 @@ export class ArtistService {
 
   create(createArtistDto: CreateArtistDto) {
     const artist = { ...createArtistDto, id: randomUUID() };
+
     this.db.artists.push(artist);
+
     return artist;
   }
 
@@ -20,29 +22,27 @@ export class ArtistService {
 
   findOne(id: string) {
     const artist = this.db.artists.find((a) => a.id === id);
+
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
+
     return artist;
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.db.artists.find((a) => a.id === id);
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
+    const artist = this.findOne(id);
 
     Object.assign(artist, updateArtistDto);
+
     return artist;
   }
 
   remove(id: string): void {
-    const artistIndex = this.db.artists.findIndex((u) => u.id === id);
-    if (artistIndex === -1) {
-      throw new NotFoundException('Artist not found');
-    }
+    this.findOne(id);
 
-    this.db.artists.splice(artistIndex, 1);
+    this.db.artists = this.db.artists.filter((a) => a.id !== id);
+
     return;
   }
 }
