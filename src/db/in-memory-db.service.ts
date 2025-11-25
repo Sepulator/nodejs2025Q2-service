@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { User } from 'src/user/entities/user.entity';
 
@@ -6,4 +7,5 @@ import { User } from 'src/user/entities/user.entity';
 export class InMemoryDbService {
   users: User[] = [];
   artists: Artist[] = [];
+  albums: Album[] = [];
 }
