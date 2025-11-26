@@ -55,6 +55,8 @@ export class ArtistService {
       }
     }
 
+    this.db.favs.artists = this.db.favs.artists.filter((artistId) => artistId !== id);
+
     return;
   }
 }

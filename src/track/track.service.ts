@@ -46,6 +46,7 @@ export class TrackService {
     this.findOne(id);
 
     this.db.tracks = this.db.tracks.filter((t) => t.id !== id);
+    this.db.favs.tracks = this.db.favs.tracks.filter((trackId) => trackId !== id);
 
     return;
   }

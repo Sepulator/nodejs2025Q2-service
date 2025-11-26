@@ -36,13 +36,15 @@ export class FavsService {
   createTrackFavs(id: string) {
     const track = this.db.tracks.find((t) => t.id === id);
 
-    console.log(track);
-
     if (!track) {
       throw new UnprocessableEntityException('Track not found');
     }
 
-    this.db.favs.tracks.push(id);
+    const trackInFavs = this.db.favs.tracks.find((tId) => tId === id);
+
+    if (!trackInFavs) {
+      this.db.favs.tracks.push(id);
+    }
 
     return track;
   }
@@ -55,6 +57,7 @@ export class FavsService {
     }
 
     this.db.favs.tracks.splice(trackIndex, 1);
+
     return;
   }
 
@@ -64,7 +67,12 @@ export class FavsService {
     if (!album) {
       throw new UnprocessableEntityException('Album not found');
     }
-    this.db.favs.albums.push(id);
+
+    const albumInFavs = this.db.favs.albums.find((aId) => aId === id);
+
+    if (!albumInFavs) {
+      this.db.favs.albums.push(id);
+    }
 
     return album;
   }
@@ -77,6 +85,7 @@ export class FavsService {
     }
 
     this.db.favs.albums.splice(albumIndex, 1);
+
     return;
   }
 
@@ -86,7 +95,11 @@ export class FavsService {
     if (!artist) {
       throw new UnprocessableEntityException('Artist not found');
     }
-    this.db.favs.artists.push(id);
+
+    const artistInFavs = this.db.favs.artists.find((aId) => aId === id);
+    if (!artistInFavs) {
+      this.db.favs.artists.push(id);
+    }
 
     return artist;
   }
@@ -99,6 +112,7 @@ export class FavsService {
     }
 
     this.db.favs.artists.splice(artistIndex, 1);
+
     return;
   }
 }
