@@ -47,6 +47,12 @@ export class AlbumService {
 
     this.db.albums = this.db.albums.filter((a) => a.id !== id);
 
+    for (const track of this.db.tracks) {
+      if (track.albumId === id) {
+        track.albumId = null;
+      }
+    }
+
     return;
   }
 }
