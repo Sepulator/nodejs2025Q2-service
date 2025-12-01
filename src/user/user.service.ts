@@ -11,8 +11,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const newUser = await this.prisma.user.create({
       data: {
-        login: createUserDto.login,
-        password: createUserDto.password,
+        ...createUserDto,
       },
     });
     const { password: _, ...user } = newUser;
@@ -64,5 +63,7 @@ export class UserService {
       }
       throw new ServiceUnavailableException('Could not delete user at this time');
     }
+
+    return;
   }
 }

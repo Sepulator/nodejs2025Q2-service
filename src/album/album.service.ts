@@ -1,32 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { InMemoryDbService } from 'src/db/in-memory-db.service';
-import { randomUUID } from 'crypto';
-import { Album } from 'src/album/entities/album.entity';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: InMemoryDbService) {}
+  constructor(private prisma: PrismaService) {}
 
   create(createAlbumDto: CreateAlbumDto) {
-    const newAlbum: Album = {
-      id: randomUUID(),
-      ...createAlbumDto,
-      artistId: createAlbumDto.artistId ?? null,
-    };
-
-    this.db.albums.push(newAlbum);
+    const newAlbum = this.prisma.album.create({
+      data: {
+        ...createAlbumDto,
+        artistId: createAlbumDto.artistId ?? null,
+      },
+    });
 
     return newAlbum;
   }
 
-  findAll() {
-    return this.db.albums;
+  async findAll() {
+    return await this.prisma.album.findMany();
   }
 
   findOne(id: string) {
-    const album = this.db.albums.find((a) => a.id === id);
+    const album = this.prisma.album.findUnique({ where: { id } });
 
     if (!album) {
       throw new NotFoundException('Album not found');
@@ -36,24 +33,25 @@ export class AlbumService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
-
-    Object.assign(album, updateAlbumDto);
+    const album = this.prisma.album.update({
+      where: { id },
+      data: {
+        ...updateAlbumDto,
+      },
+    });
     return album;
   }
 
-  remove(id: string): void {
-    this.findOne(id);
-
-    this.db.albums = this.db.albums.filter((a) => a.id !== id);
-
-    for (const track of this.db.tracks) {
-      if (track.albumId === id) {
-        track.albumId = null;
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.album.delete({ where: { id } });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('Album not found');
       }
-    }
 
-    this.db.favs.albums = this.db.favs.albums.filter((albumId) => albumId !== id);
+      throw new ServiceUnavailableException('Could not delete user at this time');
+    }
 
     return;
   }
