@@ -25,9 +25,11 @@ export class UserService {
 
   async findOne(id: string): Promise<Omit<User, 'password'>> {
     const user = await this.prisma.user.findUnique({ where: { id } });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }

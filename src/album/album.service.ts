@@ -50,7 +50,7 @@ export class AlbumService {
         throw new NotFoundException('Album not found');
       }
 
-      throw new ServiceUnavailableException('Could not delete user at this time');
+      throw new ServiceUnavailableException('Could not delete album at this time');
     }
 
     return;
