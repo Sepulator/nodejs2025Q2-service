@@ -2,7 +2,8 @@ import { ForbiddenException, Injectable, NotFoundException, ServiceUnavailableEx
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { User } from 'src/user/entities/user.entity';
+import { convertUserDate } from 'src/utils/convert-date';
 
 @Injectable()
 export class UserService {
@@ -14,13 +15,13 @@ export class UserService {
         ...createUserDto,
       },
     });
-    const { password: _, ...user } = newUser;
-    return user;
+
+    return convertUserDate(newUser);
   }
 
   async findAll(): Promise<Omit<User, 'password'>[]> {
     const users = await this.prisma.user.findMany();
-    return users.map(({ password: _, ...user }) => user);
+    return users.map((user) => convertUserDate(user));
   }
 
   async findOne(id: string): Promise<Omit<User, 'password'>> {
@@ -30,8 +31,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return convertUserDate(user);
   }
 
   async update(id: string, updatePasswordDto: UpdatePasswordDto): Promise<Omit<User, 'password'>> {
@@ -48,12 +48,10 @@ export class UserService {
       data: {
         password: updatePasswordDto.newPassword,
         version: user.version + 1,
-        updatedAt: new Date(),
       },
     });
 
-    const { password: _, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    return convertUserDate(updatedUser);
   }
 
   async remove(id: string): Promise<void> {
