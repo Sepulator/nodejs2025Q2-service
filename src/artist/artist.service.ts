@@ -31,14 +31,15 @@ export class ArtistService {
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    await this.findOne(id);
+
     const artist = this.prisma.artist.update({
       where: { id },
       data: {
         ...updateArtistDto,
       },
     });
-
     return artist;
   }
 

@@ -22,8 +22,8 @@ export class AlbumService {
     return await this.prisma.album.findMany();
   }
 
-  findOne(id: string) {
-    const album = this.prisma.album.findUnique({ where: { id } });
+  async findOne(id: string) {
+    const album = await this.prisma.album.findUnique({ where: { id } });
 
     if (!album) {
       throw new NotFoundException('Album not found');
@@ -32,13 +32,16 @@ export class AlbumService {
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    await this.findOne(id);
+
     const album = this.prisma.album.update({
       where: { id },
       data: {
         ...updateAlbumDto,
       },
     });
+
     return album;
   }
 
