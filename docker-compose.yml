@@ -3,6 +3,7 @@ services:
     build:
       dockerfile: Dockerfile-app
       context: .
+      target: production
     container_name: nodejs_app
     env_file:
       - .env
@@ -13,12 +14,8 @@ services:
       - "${PORT}:${PORT}"
     depends_on:
       - postgres
-    volumes:
-      - ./src:/usr/src/app/src
-      - ./prisma:/usr/src/app/prisma
-      - /usr/src/app/node_modules
-    restart: unless-stopped
-    command: npm run start:dev
+    restart: always
+    command: npm run start:prod
     networks:
       - app-network
 
