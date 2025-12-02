@@ -13,16 +13,17 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "npx prisma migrate deploy && node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --testPathIgnorePatterns refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:refresh": "cross-env TEST_MODE=auth jest --testPathPattern refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "scan:vulnerabilities": "docker build -t nodejs-app-scan . -f Dockerfile-app && docker scout nodejs-app-scan"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",

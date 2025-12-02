@@ -1,16 +1,49 @@
-version: '3.8'
-
 services:
+  app:
+    build:
+      dockerfile: Dockerfile-app
+      context: .
+    container_name: nodejs_app
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: ${PORT}
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./prisma:/usr/src/app/prisma
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    command: npm run start:dev
+    networks:
+      - app-network
+
   postgres:
-    build: .
+    build:
+      dockerfile: Dockerfile-db
+      context: .
     container_name: postgres_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     restart: always
     ports:
       - "5432:5432"
-    env_file:
-      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/log/postgresql
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+  postgres_logs:
+
+networks:
+  app-network:
+    driver: bridge
