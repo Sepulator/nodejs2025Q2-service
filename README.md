@@ -5,29 +5,51 @@
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-## Downloading
+## Steps to start application
+
+### Clone repo
 
 ```bash
 git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 
 ```
 
-## Switch branch to `develop`
+### Switch branch to `develop`
 
 ```bash
 npm switch develop
+
 ```
 
-## Installing NPM modules
+### Rename `.env.example` to `.env`
+
+```bash
+cp .env.example .env
+```
+
+Change credentials in `.env`
+
+### Install NPM modules
 
 ```bash
 npm install
 ```
 
-## Running application
+### Running application
 
 ```bash
-npm start
+npm start:dev
+```
+
+## How to build and start container
+
+Download and install [Docker.com](https://docker.com/)
+Docker must be started before building image.
+
+### Build image and start container in background
+
+```bash
+docker-compose up --build -d app
 ```
 
 After starting the app on port (4000 as default) you can open
