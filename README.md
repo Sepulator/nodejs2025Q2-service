@@ -35,22 +35,46 @@ Change credentials in `.env`
 npm install
 ```
 
-### Running application
+### Start container with PostgreSQL database as source of data
+
+```bash
+docker-compose up -d postgres
+```
+
+### Running application in `dev` mode
 
 ```bash
 npm start:dev
 ```
 
-## How to build and start container
+## How to build and start containers
 
 Download and install [Docker.com](https://docker.com/)
-Docker must be started before building image.
+Docker must be started before building an image.
 
-### Build image and start container in background
+### Build image and start container with `prod` profile in background
+
+To start your application in **production** mode, run:
 
 ```bash
-docker-compose up --build -d app
+docker-compose --profile prod up --build -d
 ```
+
+### Build image and start container with `dev` profile in background
+
+To start your application in **development** mode with hot-reloading, run:
+
+```bash
+docker-compose --profile dev up --build -d
+```
+
+### Display CVEs (Common Vulnerabilities and Exposures) identified in an image
+
+```bash
+npm run scan
+```
+
+Link to image in [docker hub](https://hub.docker.com/r/sepulator/nest-api/tags)
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing <http://localhost:4000/doc/>.

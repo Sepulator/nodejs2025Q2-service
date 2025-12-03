@@ -1,10 +1,10 @@
 services:
-  app:
+  app-prod:
     build:
       dockerfile: Dockerfile-app
       context: .
       target: production
-    container_name: nodejs_app
+    container_name: nodejs_app_prod
     env_file:
       - .env
     environment:
@@ -18,6 +18,32 @@ services:
     command: npm run start:prod
     networks:
       - app-network
+    profiles:
+      - prod
+
+  app-dev:
+    build:
+      dockerfile: Dockerfile-app
+      context: .
+      target: development
+    container_name: nodejs_app_dev
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: ${PORT}
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      - postgres
+    restart: always
+    command: npm run start:dev
+    volumes:
+      - ./src:/usr/src/app/src
+    networks:
+      - app-network
+    profiles:
+      - dev
 
   postgres:
     build:
