@@ -74,7 +74,7 @@ docker-compose --profile dev up --build -d
 npm run scan
 ```
 
-Link to image in [docker hub](https://hub.docker.com/r/sepulator/nest-api/tags)
+Link to image in [docker hub](https://hub.docker.com/r/sepulator/nodejs2025q2-service)
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing <http://localhost:4000/doc/>.
