@@ -68,7 +68,13 @@ To start your application in **development** mode with hot-reloading, run:
 docker-compose --profile dev up --build -d
 ```
 
-Link to image in [docker hub](https://hub.docker.com/r/sepulator/nest-api/tags)
+### Display CVEs (Common Vulnerabilities and Exposures) identified in an image
+
+```bash
+npm run scan
+```
+
+Link to image in [docker hub](https://hub.docker.com/r/sepulator/nodejs2025q2-service)
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing <http://localhost:4000/doc/>.
