@@ -7,9 +7,17 @@ import * as fs from 'node:fs/promises';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
 
+import { LoggingService } from './logging/logging.service';
+import { LoggingInterceptor } from './logging/logging.interceptor';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new LoggingService(),
+  });
   app.useGlobalPipes(new ValidationPipe());
+
+  const logger = app.get(LoggingService);
+  app.useGlobalInterceptors(new LoggingInterceptor(logger));
 
   const document = yaml.load(await fs.readFile(join(process.cwd(), 'doc/api.yaml'), 'utf8')) as any;
 
