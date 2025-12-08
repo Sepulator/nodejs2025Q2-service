@@ -1,39 +1,47 @@
 import { ConsoleLogger, Injectable, LogLevel } from '@nestjs/common';
+import { FileLogger } from './file-logger';
 
 @Injectable()
 export class LoggingService extends ConsoleLogger {
+  private fileLogger = new FileLogger();
+
   constructor() {
     super();
     this.setLogLevels(this.getLogLevelsFromEnv());
   }
 
-  log(message: any, context?: string) {
+  async log(message: any, context?: string) {
     if (this.isLevelEnabled('log')) {
       super.log(message, context);
+      await this.fileLogger.log(`[LOG] [${context || ''}] ${message}`);
     }
   }
 
-  error(message: any, trace?: string, context?: string) {
+  async error(message: any, trace?: string, context?: string) {
     if (this.isLevelEnabled('error')) {
       super.error(message, trace, context);
+      await this.fileLogger.error(`[ERROR] [${context || ''}] ${message}${trace || ''}`);
     }
   }
 
-  warn(message: any, context?: string) {
+  async warn(message: any, context?: string) {
     if (this.isLevelEnabled('warn')) {
       super.warn(message, context);
+      await this.fileLogger.log(`[WARN] [${context || ''}] ${message}`);
     }
   }
 
-  debug(message: any, context?: string) {
+  async debug(message: any, context?: string) {
     if (this.isLevelEnabled('debug')) {
       super.debug(message, context);
+      await this.fileLogger.log(`[DEBUG] [${context || ''}] ${message}`);
     }
   }
 
-  verbose(message: any, context?: string) {
+  async verbose(message: any, context?: string) {
     if (this.isLevelEnabled('verbose')) {
       super.verbose(message, context);
+      await this.fileLogger.log(`[VERBOSE] [${context || ''}] ${message}`);
     }
   }
 
