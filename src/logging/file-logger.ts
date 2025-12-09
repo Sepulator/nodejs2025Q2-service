@@ -2,6 +2,8 @@ import { mkdir, stat, access, appendFile, rename } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { join, dirname, extname, basename } from 'node:path';
 
+const LOG_MAX_FILE_SIZE = 10;
+
 export class FileLogger {
   private logFilePath: string;
   private errorLogFilePath: string;
@@ -10,7 +12,7 @@ export class FileLogger {
   constructor(logDir: string = 'logs') {
     this.logFilePath = join(logDir, 'combined.log');
     this.errorLogFilePath = join(logDir, 'error.log');
-    this.maxFileSize = (parseInt(process.env.LOG_MAX_FILE_SIZE, 10) || 10) * 1024;
+    this.maxFileSize = (parseInt(process.env.LOG_MAX_FILE_SIZE, 10) || LOG_MAX_FILE_SIZE) * 1024;
     this.ensureLogDir(logDir);
   }
 

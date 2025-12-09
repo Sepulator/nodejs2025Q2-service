@@ -7,9 +7,20 @@ import { FavsModule } from './favs/favs.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { DbModule } from './db/db.module';
 import { LoggingModule } from './logging/logging.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UserModule, ArtistModule, AlbumModule, TrackModule, FavsModule, PrismaModule, DbModule, LoggingModule],
+  imports: [
+    UserModule,
+    ArtistModule,
+    AlbumModule,
+    TrackModule,
+    FavsModule,
+    PrismaModule,
+    DbModule,
+    LoggingModule,
+    AuthModule,
+  ],
   controllers: [],
   providers: [],
 })
