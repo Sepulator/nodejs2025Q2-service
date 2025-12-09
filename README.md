@@ -14,7 +14,7 @@ git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 
 ```
 
-### Switch branch to `develop`
+### Switch branch to `docker-orm`
 
 ```bash
 npm switch develop
@@ -33,12 +33,6 @@ Change credentials in `.env`
 
 ```bash
 npm install
-```
-
-### Start container with PostgreSQL database as source of data
-
-```bash
-docker-compose up -d postgres
 ```
 
 ### Running application in `dev` mode
@@ -62,7 +56,7 @@ docker-compose --profile prod up --build -d
 
 ### Build image and start container with `dev` profile in background
 
-To start your application in **development** mode with hot-reloading, run:
+To start your application in **development** mode with hot-reloading with `src` changes, run:
 
 ```bash
 docker-compose --profile dev up --build -d
