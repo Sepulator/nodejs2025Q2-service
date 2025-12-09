@@ -1,8 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entities/user.entity';
+import { convertUserDate } from 'src/utils/convert-date';
 
 const saltOrRounds = 10;
 
@@ -27,5 +28,22 @@ export class AuthService {
     });
 
     return newUser;
+  }
+
+  async login(createAuthDto: CreateAuthDto): Promise<Omit<User, 'password'>> {
+    const { login, password } = createAuthDto;
+    const user = await this.userService.findUserByLogin(login);
+
+    if (!user) {
+      throw new ForbiddenException('User not found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new ForbiddenException('Wrong password');
+    }
+
+    return convertUserDate(user);
   }
 }
