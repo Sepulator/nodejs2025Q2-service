@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Download and install [Docker.com](https://docker.com/)
 
 ## Steps to start application
 
@@ -35,6 +36,12 @@ Change credentials in `.env`
 npm install
 ```
 
+### Start container with PostgreSQL database as source of data
+
+```bash
+docker-compose up -d postgres
+```
+
 ### Running application in `dev` mode
 
 ```bash
@@ -43,10 +50,9 @@ npm start:dev
 
 ## How to build and start containers
 
-Download and install [Docker.com](https://docker.com/)
 Docker must be started before building an image.
 
-### Build image and start container with `prod` profile in background
+### Build image and start app in container with `prod` profile in background
 
 To start your application in **production** mode, run:
 
@@ -54,7 +60,7 @@ To start your application in **production** mode, run:
 docker-compose --profile prod up --build -d
 ```
 
-### Build image and start container with `dev` profile in background
+### Build image and start app in container with `dev` profile in background
 
 To start your application in **development** mode with hot-reloading with `src` changes, run:
 
