@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Download and install [Docker.com](https://docker.com/)
 
 ## Steps to start application
 
@@ -14,7 +15,7 @@ git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 
 ```
 
-### Switch branch to `develop`
+### Switch branch to `docker-orm`
 
 ```bash
 npm switch develop
@@ -49,10 +50,9 @@ npm start:dev
 
 ## How to build and start containers
 
-Download and install [Docker.com](https://docker.com/)
 Docker must be started before building an image.
 
-### Build image and start container with `prod` profile in background
+### Build image and start app in container with `prod` profile in background
 
 To start your application in **production** mode, run:
 
@@ -60,9 +60,9 @@ To start your application in **production** mode, run:
 docker-compose --profile prod up --build -d
 ```
 
-### Build image and start container with `dev` profile in background
+### Build image and start app in container with `dev` profile in background
 
-To start your application in **development** mode with hot-reloading, run:
+To start your application in **development** mode with hot-reloading with `src` changes, run:
 
 ```bash
 docker-compose --profile dev up --build -d
