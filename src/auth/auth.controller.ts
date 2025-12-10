@@ -4,6 +4,7 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Tokens } from './types/tokens.interface';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,5 +22,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() createAuthDto: CreateAuthDto): Promise<Tokens> {
     return await this.authService.login(createAuthDto);
+  }
+
+  @Public()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
+    return await this.authService.refresh(refreshTokenDto);
   }
 }

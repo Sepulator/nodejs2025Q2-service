@@ -8,6 +8,7 @@ import { Tokens } from './types/tokens.interface';
 import { ConfigService } from '@nestjs/config';
 import { StringValue } from 'ms';
 import { JWT_SECRET_KEY, JWT_SECRET_REFRESH_KEY, TOKEN_REFRESH_EXPIRE_TIME, TOKEN_EXPIRE_TIME } from './auth.constants';
+import { RefreshTokenDto } from 'src/auth/dto/refresh-token.dto';
 
 const saltOrRounds = 10;
 
@@ -56,6 +57,22 @@ export class AuthService {
     }
 
     return this.getTokens(user.id, user.login);
+  }
+
+  async refresh(refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
+    const { refreshToken } = refreshTokenDto;
+
+    try {
+      const decodedToken = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY', JWT_SECRET_REFRESH_KEY),
+      });
+
+      const user = await this.userService.findOne(decodedToken.sub);
+
+      return this.getTokens(user.id, user.login);
+    } catch (error) {
+      throw new ForbiddenException('Invalid or expired refresh token');
+    }
   }
 
   async getTokens(userId: string, login: string): Promise<Tokens> {
