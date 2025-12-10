@@ -7,6 +7,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Tokens } from './types/tokens.interface';
 import { ConfigService } from '@nestjs/config';
 import { StringValue } from 'ms';
+import { JWT_SECRET_KEY, JWT_SECRET_REFRESH_KEY, TOKEN_REFRESH_EXPIRE_TIME, TOKEN_EXPIRE_TIME } from './auth.constants';
 
 const saltOrRounds = 10;
 
@@ -61,13 +62,13 @@ export class AuthService {
     const payload = { sub: userId, login };
 
     const jwtSignOptionsAccess: JwtSignOptions = {
-      secret: this.configService.get<string>('JWT_SECRET_KEY'),
-      expiresIn: this.configService.get<string>('TOKEN_EXPIRE_TIME') as StringValue,
+      secret: this.configService.get<string>('JWT_SECRET_KEY', JWT_SECRET_KEY),
+      expiresIn: this.configService.get<string>('TOKEN_EXPIRE_TIME', TOKEN_EXPIRE_TIME) as StringValue,
     };
 
     const jwtSignOptionsRefresh: JwtSignOptions = {
-      secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY'),
-      expiresIn: this.configService.get<string>('TOKEN_REFRESH_EXPIRE_TIME') as StringValue,
+      secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY', JWT_SECRET_REFRESH_KEY),
+      expiresIn: this.configService.get<string>('TOKEN_REFRESH_EXPIRE_TIME', TOKEN_REFRESH_EXPIRE_TIME) as StringValue,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
