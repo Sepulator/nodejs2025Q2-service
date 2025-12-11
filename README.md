@@ -18,7 +18,7 @@ git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 ### Switch branch to `docker-orm`
 
 ```bash
-npm switch develop
+npm switch docker-orm
 
 ```
 
