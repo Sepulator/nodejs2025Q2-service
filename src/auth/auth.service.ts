@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -8,7 +8,7 @@ import { Tokens } from './types/tokens.interface';
 import { ConfigService } from '@nestjs/config';
 import { StringValue } from 'ms';
 import { JWT_SECRET_KEY, JWT_SECRET_REFRESH_KEY, TOKEN_REFRESH_EXPIRE_TIME, TOKEN_EXPIRE_TIME } from './auth.constants';
-import { RefreshTokenDto } from 'src/auth/dto/refresh-token.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 const saltOrRounds = 10;
 
@@ -62,21 +62,25 @@ export class AuthService {
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
     const { refreshToken } = refreshTokenDto;
 
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is missing');
+    }
+
     try {
       const decodedToken = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY', JWT_SECRET_REFRESH_KEY),
       });
 
-      const user = await this.userService.findOne(decodedToken.sub);
+      const user = await this.userService.findOne(decodedToken.userId);
 
-      return this.getTokens(user.id, user.login);
+      return await this.getTokens(user.id, user.login);
     } catch (error) {
       throw new ForbiddenException('Invalid or expired refresh token');
     }
   }
 
   async getTokens(userId: string, login: string): Promise<Tokens> {
-    const payload = { sub: userId, login };
+    const payload = { userId, login };
 
     const jwtSignOptionsAccess: JwtSignOptions = {
       secret: this.configService.get<string>('JWT_SECRET_KEY', JWT_SECRET_KEY),
