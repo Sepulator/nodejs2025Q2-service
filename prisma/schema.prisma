@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  login     String
+  password  String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Artist {
+  id         String      @id @default(uuid())
+  name       String
+  grammy     Boolean     @default(false)
+  artistFav  ArtistFavorites?
+  Track      Track[]
+  Album      Album[]
+}
+
+model Album {
+  id        String     @id @default(uuid())
+  name      String
+  year      Int
+  artist    Artist?    @relation(fields: [artistId], references: [id])
+  artistId  String?
+  albumFav  AlbumFavorites?
+  Track     Track[]
+}
+
+model Track {
+  id        String     @id @default(uuid())
+  name      String
+  artist    Artist?    @relation(fields: [artistId], references: [id])
+  artistId  String?
+  album     Album?     @relation(fields: [albumId], references: [id])
+  albumId   String?
+  duration  Int
+  trackFav  TrackFavorites?
+}
+
+model AlbumFavorites {
+  id      String @id @default(uuid())
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId String @unique
+}
+
+model TrackFavorites {
+  id      String @id @default(uuid())
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String @unique
+}
+
+model ArtistFavorites {
+  id       String @id @default(uuid())
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId String @unique
+}

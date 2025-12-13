@@ -4,31 +4,77 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Download and install [Docker.com](https://docker.com/)
 
-## Downloading
+## Steps to start application
+
+### Clone repo
 
 ```bash
 git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 
 ```
 
-## Switch branch to `develop`
+### Switch branch to `docker-orm`
 
 ```bash
-npm switch develop
+npm switch docker-orm
+
 ```
 
-## Installing NPM modules
+### Rename `.env.example` to `.env`
+
+```bash
+cp .env.example .env
+```
+
+Change credentials in `.env`
+
+### Install NPM modules
 
 ```bash
 npm install
 ```
 
-## Running application
+### Start container with PostgreSQL database as source of data
 
 ```bash
-npm start
+docker-compose up -d postgres
 ```
+
+### Running application in `dev` mode
+
+```bash
+npm start:dev
+```
+
+## How to build and start containers
+
+Docker must be started before building an image.
+
+### Build image and start app in container with `prod` profile in background
+
+To start your application in **production** mode, run:
+
+```bash
+docker-compose --profile prod up --build -d
+```
+
+### Build image and start app in container with `dev` profile in background
+
+To start your application in **development** mode with hot-reloading with `src` changes, run:
+
+```bash
+docker-compose --profile dev up --build -d
+```
+
+### Display CVEs (Common Vulnerabilities and Exposures) identified in an image
+
+```bash
+npm run scan
+```
+
+Link to image in [docker hub](https://hub.docker.com/r/sepulator/nodejs2025q2-service)
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing <http://localhost:4000/doc/>.

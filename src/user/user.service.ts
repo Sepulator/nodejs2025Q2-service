@@ -1,64 +1,69 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { InMemoryDbService } from 'src/db/in-memory-db.service';
-import { User } from './entities/user.entity';
-import { randomUUID } from 'node:crypto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/user/entities/user.entity';
+import { convertUserDate } from 'src/utils/convert-date';
 
 @Injectable()
 export class UserService {
-  constructor(private db: InMemoryDbService) {}
+  constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto): Omit<User, 'password'> {
-    const now = Date.now();
-    const newUser: User = {
-      id: randomUUID(),
-      login: createUserDto.login,
-      password: createUserDto.password,
-      version: 1,
-      createdAt: now,
-      updatedAt: now,
-    };
-    this.db.users.push(newUser);
-    const { password: _, ...user } = newUser;
-    return user;
+  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+    const newUser = await this.prisma.user.create({
+      data: {
+        ...createUserDto,
+      },
+    });
+
+    return convertUserDate(newUser);
   }
 
-  findAll(): Omit<User, 'password'>[] {
-    return this.db.users.map(({ password: _, ...user }) => user);
+  async findAll(): Promise<Omit<User, 'password'>[]> {
+    const users = await this.prisma.user.findMany();
+    return users.map((user) => convertUserDate(user));
   }
 
-  findOne(id: string): Omit<User, 'password'> {
-    const user = this.db.users.find((u) => u.id === id);
+  async findOne(id: string): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+
+    return convertUserDate(user);
   }
 
-  update(id: string, updatePasswordDto: UpdatePasswordDto): Omit<User, 'password'> {
-    const user = this.db.users.find((u) => u.id === id);
+  async update(id: string, updatePasswordDto: UpdatePasswordDto): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Wrong old password');
     }
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
 
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: updatePasswordDto.newPassword,
+        version: user.version + 1,
+      },
+    });
+
+    return convertUserDate(updatedUser);
   }
 
-  remove(id: string): void {
-    const userIndex = this.db.users.findIndex((u) => u.id === id);
-    if (userIndex === -1) {
-      throw new NotFoundException('User not found');
+  async remove(id: string): Promise<void> {
+    try {
+      await this.prisma.user.delete({ where: { id } });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('User not found');
+      }
+      throw new ServiceUnavailableException('Could not delete user at this time');
     }
-    this.db.users.splice(userIndex, 1);
+
     return;
   }
 }
