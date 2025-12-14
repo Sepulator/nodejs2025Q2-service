@@ -34,6 +34,12 @@ export class UserService {
     return convertUserDate(user);
   }
 
+  async findUserByLogin(login: string) {
+    const user = await this.prisma.user.findFirst({ where: { login } });
+
+    return user;
+  }
+
   async update(id: string, updatePasswordDto: UpdatePasswordDto): Promise<Omit<User, 'password'>> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {
