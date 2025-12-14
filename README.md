@@ -4,7 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
-- Download and install [Docker.com](https://docker.com/)
+- Docker - [Download and install Docker](https://docker.com/)
 
 ## Steps to start application
 
@@ -15,10 +15,10 @@ git clone https://github.com/Sepulator/nodejs2025Q2-service.git
 
 ```
 
-### Switch branch to `docker-orm`
+### Switch branch to `logs-errors-auth`
 
 ```bash
-npm switch docker-orm
+npm switch logs-errors-auth
 
 ```
 
@@ -100,6 +100,12 @@ To run all test with authorization
 
 ```bash
 npm run test:auth
+```
+
+To test `refresh` endpoint and tokens
+
+```bash
+npm run test:refresh
 ```
 
 To run only specific test suite with authorization
